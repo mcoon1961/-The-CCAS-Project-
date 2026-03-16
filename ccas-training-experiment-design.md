@@ -26,14 +26,17 @@ Three developments in the preference optimization literature make this experimen
 
 ## Experimental Design: 2×2 Ablation
 
-Four conditions, identical base model, identical prompts, different training data and loss functions. This is a clean ablation that isolates the contribution of each mechanism.
+Five conditions: one unmodified baseline plus a 2x2 ablation. The unmodified baseline establishes what the model does before any moral-specific training. The four trained conditions isolate the contribution of each mechanism.
 
-| Condition | Variance-weighted DPO | Dimensional SFT | Expected behavior |
-|:----------|:---------------------:|:---------------:|:------------------|
-| A: Baseline | No (standard DPO, uniform weights) | No | Tier 1: silent default on contested scenarios |
-| B: Variance-only | Yes (cross-cultural variance weights) | No | Tier 2: hedging on contested scenarios, but vague |
-| C: Dimensional-only | No (standard DPO, uniform weights) | Yes | Can articulate dimensions when asked, but applies default confidently |
-| D: Full CCAS | Yes (cross-cultural variance weights) | Yes | Tier 3-4: calibrated confidence with dimensional awareness |
+| Condition | DPO Training | Dimensional SFT | Expected behavior |
+|:----------|:------------|:---------------:|:------------------|
+| 0: Unmodified | None | No | Pre-experiment baseline: whatever Llama 3.1 8B Instruct does out of the box |
+| A: Baseline DPO | Standard DPO, uniform weights | No | Tier 1-2: some improvement from moral preference pairs, but no variance calibration |
+| B: Variance-only | Variance-weighted DPO | No | Tier 2: hedging on contested scenarios, but vague |
+| C: Dimensional-only | Standard DPO, uniform weights | Yes | Can articulate dimensions when asked, but applies default confidently |
+| D: Full CCAS | Variance-weighted DPO | Yes | Tier 3-4: calibrated confidence with dimensional awareness |
+
+Condition 0 is essential. Without it, we cannot distinguish the effect of DPO training on moral preference pairs (A vs. 0) from the effect of variance weighting (B vs. A) or dimensional training (C vs. A). If the base model already produces some Tier 2 behavior on morally contested prompts (plausible, given existing safety training), Condition A's improvement over Condition 0 tells us how much of the behavioral change comes from simply training on moral scenarios with any preference signal, versus how much comes from the CCAS-specific mechanisms. Condition 0 requires zero additional compute: it is just inference on the unmodified model.
 
 **The paper's central prediction:** Neither mechanism alone produces the target behavior. Variance without dimensional training produces vague hedging (Condition B). Dimensional training without variance produces a model that knows the vocabulary but applies its default framework confidently regardless (Condition C). Only the combination produces calibrated, dimension-aware responses (Condition D). If Condition D outperforms both B and C, and neither B nor C alone matches D, the two-mechanism architecture is validated.
 
@@ -75,6 +78,8 @@ Each prompt is annotated with:
 The variance score for each prompt is the average of normalized distances from these sources, mapped to [0, 1] where 0 = maximum cross-cultural convergence and 1 = maximum divergence. Prompts are binned into three tiers: low variance (v < 0.33, candidate universal territory), medium variance (0.33 ≤ v < 0.67, contingent agreement territory), and high variance (v ≥ 0.67, cultural contingency territory).
 
 **Validation of variance scores.** Three independent raters with cross-cultural psychology training rank the 200 prompts by expected cross-cultural variance. Inter-rater reliability (Kendall's W) must exceed 0.7. The expert ranking is compared to the literature-derived scores; if the correlation is below 0.6, the score construction method needs revision.
+
+**Acknowledged weakness.** The variance score construction is among the experiment's most vulnerable design choices. Averaging normalized distances from three heterogeneous sources (Moral Machine forced-choice dilemmas, MFQ Likert-scale self-reports, WVS survey items) involves substantial normalization and weighting decisions that are underspecified here. How to normalize across fundamentally different measurement scales, how to handle dimensions where one source provides data and another does not, and whether to weight the three sources equally are all open questions that the research team must resolve before data construction begins. The expert validation step catches gross miscalibrations but not subtle ones. If the experiment produces null results, a miscalibrated variance score is one of the first places to look. Documenting the full derivation procedure with sensitivity analyses (how do results change if variance scores shift by +/- 0.1?) is a requirement for the write-up, not optional.
 
 ### Dataset 2: Preference Pairs for DPO (Conditions A, B, D)
 
@@ -184,6 +189,11 @@ def variance_weight(v_score, c_min=0.3, c_max=1.5):
     Maps cross-cultural variance score v ∈ [0,1] to DPO loss weight.
     v=0 (full convergence) → weight=c_max (learn confidently)
     v=1 (full divergence) → weight=c_min (learn cautiously)
+    
+    NOTE: c_min and c_max are tuning targets, not fixed constants.
+    The defaults (0.3, 1.5) produce a 5x ratio between strongest and
+    weakest learning signals. The hyperparameter sweep should include
+    c_min in {0.1, 0.3, 0.5} and c_max in {1.0, 1.5, 2.0}.
     """
     return c_max - (c_max - c_min) * v_score
 
@@ -197,6 +207,10 @@ The weighting function maps variance scores to loss multipliers. Low variance (c
 This is the mathematical equivalent of the paper's `R_modified ~ N(r_base, σ²/α(q))` formulation, translated from reward variance into DPO loss weighting. In DPO, higher loss weight corresponds to a tighter reward signal; lower loss weight corresponds to a noisier one.
 
 **Critically, the "preferred" response for high-variance prompts is NOT a WEIRD-default response.** It is a Tier 3-4 response that acknowledges the divergence. The variance weight controls how aggressively the model moves toward the preferred response, not what the preferred response is. On high-variance prompts, the preferred response demonstrates dimensional awareness ("frameworks differ on this"), and the attenuated weight means the model learns this at a measured pace rather than memorizing a specific formulation of humility.
+
+**The attenuation direction is a hypothesis, not self-evidently correct.** Attenuating the learning signal on high-variance prompts is a regularization choice: it prevents the model from memorizing specific hedging formulations by learning more slowly in contested territory. An equally defensible alternative would be to amplify the signal on high-variance prompts, since that is where the model's behavior most needs to change from its WEIRD default. The current design attenuates because the paper's variance formulation treats uncertainty as emergent from noisy reward signals, and attenuation is the DPO analog of increased reward variance. Whether attenuation or amplification produces better calibration is itself an empirical question. If budget permits, a fifth trained condition (E: amplified-variance DPO, where high-variance prompts get higher weight) would directly test this design choice.
+
+**Tier-gap within preference pairs.** Each prompt produces up to three preference pairs (T4>T3, T3>T2, T2>T1) with different difficulty margins. The T2>T1 comparison is easy (the model already understands hedging vs. asserting). The T4>T3 comparison is hard (distinguishing calibrated confidence from framework awareness without calibration). Standard DPO with a fixed beta treats all pairs equally within a prompt. The variance weight modulates by prompt, not by tier gap. This means the model may learn most from the easy comparisons and least from the hard ones. A more sophisticated design could combine per-prompt variance weighting with per-pair margin weighting (drawing on MADPO's approach), but this adds complexity. The current design prioritizes simplicity for the initial test. If the results show strong Tier 2 behavior but weak Tier 4, the tier-gap imbalance is the likely culprit and pair-specific weighting should be tested in a follow-up.
 
 **DPO Hyperparameters (all conditions):**
 - β (DPO temperature): 0.1
@@ -225,18 +239,19 @@ All four conditions are evaluated on a held-out test set of **50 moral scenario 
 
 **1. Tier classification by blind raters.**
 
-Three raters (same cross-cultural training as the annotators, but blinded to condition) classify each response on the four-tier rubric. Each rater scores all 200 responses (50 prompts × 4 conditions) in randomized order. Inter-rater reliability is computed (Fleiss's kappa, target > 0.6). The primary outcome is the proportion of responses at each tier per condition.
+Three raters (same cross-cultural training as the annotators, but blinded to condition) classify each response on the four-tier rubric. Each rater scores all 250 responses (50 prompts x 5 conditions) in randomized order. Inter-rater reliability is computed (Fleiss's kappa, target > 0.6). The primary outcome is the proportion of responses at each tier per condition.
 
 **Predictions:**
 
 | Condition | Tier 1 | Tier 2 | Tier 3 | Tier 4 |
 |:----------|:------:|:------:|:------:|:------:|
-| A: Baseline | ~70% | ~25% | ~5% | ~0% |
+| 0: Unmodified | ~75% | ~20% | ~5% | ~0% |
+| A: Baseline DPO | ~55% | ~35% | ~8% | ~2% |
 | B: Variance-only | ~30% | ~55% | ~10% | ~5% |
 | C: Dimensional-only | ~40% | ~20% | ~35% | ~5% |
 | D: Full CCAS | ~10% | ~15% | ~40% | ~35% |
 
-The key comparisons: D vs. A (overall improvement), D vs. B (dimensional training contribution), D vs. C (variance contribution), and the interaction (D should exceed the sum of B and C improvements over A, indicating synergy rather than additive effects).
+The key comparisons: 0 vs. A (effect of moral preference training itself), D vs. A (CCAS-specific improvement), D vs. B (dimensional training contribution), D vs. C (variance contribution), and the interaction (D should exceed the sum of B and C improvements over A, indicating synergy rather than additive effects).
 
 **2. Value-taxonomic entropy.**
 
@@ -311,11 +326,14 @@ Rephrase 10 test prompts into semantically equivalent but syntactically differen
 | Evaluation inference (4 conditions × 50 prompts) | ~1 GPU-hour | $2-4 |
 | Hyperparameter tuning buffer (3× training) | ~30 GPU-hours | $60-120 |
 | **Total compute** | **~40 GPU-hours** | **$80-160** |
-| Expert annotators (3 people × ~40 hrs each) | 120 person-hours | $3,000-6,000 |
-| Expert raters for evaluation (3 people × ~15 hrs each) | 45 person-hours | $1,125-2,250 |
-| **Total** | | **$4,200-8,400** |
+| Expert annotators (3 people x ~40 hrs each) | 120 person-hours | $4,200-7,200 |
+| Expert raters for evaluation (3 people x ~20 hrs each) | 60 person-hours | $2,100-3,600 |
+| Annotator onboarding (briefing on 4 dimensions, rubric training) | ~20 person-hours | included above |
+| **Total** | | **$6,400-11,000** |
 
 The dominant cost is human annotation, not compute. This is inherent to the problem: the experiment tests whether structured human moral judgment improves model behavior, so it requires structured human moral judgment in the training data. The compute itself is trivial by ML standards.
+
+The annotator cost estimate assumes $35-60/hour for people with graduate training in cross-cultural moral psychology. This rate reflects that writing Tier 3-4 gold-standard responses is skilled intellectual work, not mechanical labeling. Finding three annotators who can produce consistent, accurate gold-standard responses across all four structural dimensions requires onboarding (~6-8 hours per person of briefing, practice annotation, and calibration against each other) that is included in the hours above. The most likely source is postdoctoral researchers or advanced PhD students in moral psychology, cultural psychology, or political philosophy with cross-cultural training.
 
 **Cost reduction option:** If expert annotation is budget-constrained, reduce the prompt set from 200 to 100 (25 per dimension) and the preference pairs from 400-600 to 200-300. The experiment is less powered but still tests the core mechanism. This cuts annotation costs roughly in half.
 
@@ -395,7 +413,7 @@ class VarianceWeightedDPOTrainer(DPOTrainer):
         return loss
 ```
 
-Note: The exact implementation depends on TRL version and how prompt metadata is passed through the data pipeline. The logic is: look up each training example's variance score, compute the weight, multiply the per-example loss. A TRL-experienced engineer will know how to hook this into the existing DPOTrainer.
+**Note: This is pseudocode illustrating the logic, not production code.** The exact implementation depends on TRL version and how prompt metadata is passed through the data pipeline. In particular, `super().compute_loss()` may return a scalar mean rather than a per-example loss tensor in current TRL versions, requiring the implementer to access per-example losses through the DPOTrainer's internal methods (e.g., `concatenated_forward` and manual loss computation). A TRL-experienced engineer will know how to hook this into the existing DPOTrainer; the pseudocode communicates the intent: look up each training example's variance score, compute the weight, multiply the per-example loss before reduction.
 
 ### 3. Evaluation Pipeline
 
@@ -508,12 +526,17 @@ Total: approximately 9 weeks, with weeks 1-5 dominated by data construction (our
 
 ---
 
-## Key References for the ML Collaborator
+## Key References
 
-- Rafailov et al. (2023). Direct Preference Optimization. arXiv:2305.18290. *The base DPO method.*
-- Rho (2025). Margin Adaptive DPO. arXiv:2510.05342. *Per-example loss reweighting precedent.*
-- CAPO (2025). Confidence Aware Preference Optimization. arXiv:2511.07691. *Confidence-weighted DPO for multilingual alignment. Closest existing work to our modification.*
-- Russo et al. (2025). *Value-taxonomic entropy measurement for LLM moral pluralism.*
-- Münker (2025). Cultural Bias in LLMs. arXiv:2507.10073. *MFQ-2 across 19 cultures, Llama 3.1 8B baseline characterization.*
-- Schulman & Thinking Machines Lab (2025). LoRA Without Regret. *LoRA training best practices.*
-- HuggingFace TRL DPOTrainer documentation. *Implementation framework.*
+- Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., & Finn, C. (2023). Direct Preference Optimization: Your language model is secretly a reward model. *NeurIPS 2023*. arXiv:2305.18290.
+- Rho, H. G. (2025). Margin Adaptive DPO: Leveraging reward model for granular control in preference optimization. *arXiv:2510.05342*.
+- Pokharel, R., Tao, Y., & Agrawal, A. (2025). CAPO: Confidence Aware Preference Optimization learning for multilingual preferences. *arXiv:2511.07691*.
+- Russo, G., Nozza, D., Rottger, P., & Hovy, D. (2025). The pluralistic moral gap: Understanding judgment and value differences between humans and large language models. *arXiv:2507.17216*.
+- Munker, S. (2025). Cultural bias in large language models: Evaluating AI agents through moral questionnaires. *Proceedings of 0th Symposium on Moral and Legal AI Alignment, IACAP/AISB Conference*. arXiv:2507.10073.
+- Awad, E., et al. (2018). The Moral Machine experiment. *Nature*, 563(7729), 59-64.
+- Graham, J., Haidt, J., Koleva, S., Motyl, M., Iyer, R., Wojcik, S. P., & Ditto, P. H. (2013). Moral foundations theory: The pragmatic validity of moral pluralism. *Advances in Experimental Social Psychology*, 47, 55-130.
+- Atari, M., et al. (2023). Morality beyond the WEIRD: How the nomological network of morality varies across cultures. *Journal of Personality and Social Psychology*. (Introduces MFQ-2.)
+- Inglehart, R., et al. (ongoing). World Values Survey. www.worldvaluessurvey.org.
+- Schulman, J., & Thinking Machines Lab. (2025). LoRA Without Regret. *Thinking Machines Lab: Connectionism*. https://thinkingmachines.ai/blog/lora/.
+- Zheng, L., et al. (2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. *NeurIPS 2023*. arXiv:2306.05685.
+- HuggingFace TRL DPOTrainer documentation. https://huggingface.co/docs/trl/.

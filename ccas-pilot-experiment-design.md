@@ -68,7 +68,7 @@ Each respondent completes both scenarios. Session duration: 15-20 minutes.
 
 **Recruit 60 per population (120 total)** to ensure 50 usable after exclusions for incomplete responses, nonsense narratives, attention check failures, or Prolific quality flags.
 
-**Power analysis:** For detecting a large effect size (Cohen's d = 0.8) in distributional differences on a 2-simplex with 80% power at alpha = 0.05, approximately 30 respondents per group is sufficient. 50 per group provides headroom for exclusions and supports secondary analyses. The primary analysis uses permutation tests on earth mover's distance (EMD) between population-level triad distributions, which are nonparametric and require no distributional assumptions.
+**Sample size rationale:** There is no established power analysis framework for EMD on a 2-simplex; the standard Cohen's d framework does not apply because the test statistic is a distributional distance, not a difference of means. The 50-per-group target is based on three practical considerations: (1) density estimation on a 2-simplex requires sufficient samples to resolve distributional shape, and simulation studies suggest 30-50 points produce stable kernel density estimates on a triangle (Duong, 2007); (2) the Bartels et al. SenseMaker studies (2018, 2019) achieved interpretable population-level patterns with subgroups of similar size; (3) the permutation test makes no distributional assumptions, so the main risk is insufficient sample density to resolve shape differences rather than insufficient statistical power in the classical sense. 50 per group provides headroom for exclusions and supports secondary analyses. Recruiting 60 ensures 50 usable.
 
 ---
 
@@ -88,7 +88,7 @@ A responsive web app with four screens. Built in React, hosted on Vercel (free t
 
 **Screen 2: Scenario 1.**
 - Prompt displayed at top of screen
-- Text input for narrative (minimum 150 characters, approximately 3 sentences)
+- Text input for narrative (minimum 250 characters, approximately 3-4 sentences)
 - After narrative submission, interactive triangle appears
 - Brief instruction: "Place a point in the triangle to show how you interpret the story you just told. Placing your point near a corner means that interpretation fits best. Placing it between corners means your interpretation is a mix. Placing it near the center means all three interpretations apply roughly equally."
 - Respondent taps or clicks to place point
@@ -97,6 +97,8 @@ A responsive web app with four screens. Built in React, hosted on Vercel (free t
 
 **Screen 3: Scenario 2.**
 - Same flow as Screen 2, second prompt and triad
+
+**Attention checks.** Two quality checks are embedded in the study: (1) A single attention-check item in the demographics section ("For this question, please select 'Agree'") to catch inattentive respondents. (2) Post-hoc time filter: respondents who complete a scenario (narrative + triad placement) in under 60 seconds are flagged for review, as this pace is inconsistent with thoughtful narrative composition. Flagged respondents are excluded only if the narrative is also low-quality (fewer than 250 characters after excluding filler, or semantically unrelated to the prompt). Prolific's built-in quality metrics (approval rate > 95%, previous submissions flagged for quality) provide additional screening.
 
 **Screen 4: Debrief.**
 - Thank you message
@@ -116,7 +118,9 @@ A responsive web app with four screens. Built in React, hosted on Vercel (free t
 
 **Study 1 (Population A):**
 - Prescreening: country of birth = United States, ethnicity = white, education = undergraduate degree or higher, fluent in English
-- Custom screener: religiosity question (filter for score 1-3 on 5-point scale)
+- Custom screener: religiosity question (filter for score 1-3 on 5-point scale, excluding moderately and highly religious respondents)
+
+**Note on the religiosity filter:** Excluding religious white Americans makes Population A maximally WEIRD (secular, educated, individualist), which maximizes expected divergence from Population B on the moral domain boundary dimension. The tradeoff is that a positive result may partly reflect religiosity differences rather than framework differences proper. This is mitigated by capturing religiosity in the demographics and testing whether EMD remains significant after controlling for religiosity scores via partial permutation tests (permuting only within religiosity-matched pairs). If the religiosity-controlled EMD is substantially smaller than the uncontrolled EMD, religiosity is confounded with framework; if it remains similar, the framework divergence is independent of religiosity.
 - Compensation: $8 per respondent
 - Estimated session: 20 minutes
 - Prolific fee: ~33% on top of compensation
@@ -131,13 +135,15 @@ A responsive web app with four screens. Built in React, hosted on Vercel (free t
 
 Both studies run simultaneously. Participants cannot take both studies.
 
+**Recruitment risk for Population B.** Prolific's participant pool skews UK-heavy for South Asian users. The intersection of "born in India/Bangladesh/Pakistan" AND "currently residing in United States" AND "fluent in English" may produce a smaller available pool than 60 requires. Check Prolific's pool estimator before launch. If the US-resident pool is insufficient, the fallback is to extend recruitment to UK-resident South Asians, with the tradeoff being a different host-country institutional context (NHS vs. US healthcare, different immigration dynamics). This is methodologically acceptable because the framework differences being tested (collectivist moral agent constitution, purity-based moral domain extension) are maintained by cultural infrastructure (temples, dietary practices, family structures) that operate similarly in both UK and US diaspora contexts. Document which host country each respondent resides in and test whether host country moderates the EMD result.
+
 ---
 
 ## Analysis Plan
 
 ### Primary Analysis
 
-Compute earth mover's distance (EMD) between Population A and Population B triad distributions for each scenario separately. The triad simplex is a 2-dimensional space (three vertices, two degrees of freedom). EMD measures the minimum work required to transform one distribution into the other.
+Compute earth mover's distance (EMD) between Population A and Population B triad distributions for each scenario separately. All triad data is represented in barycentric coordinates (three values summing to 1, representing the weight placed on each vertex). This is the natural representation for simplex data and the one that makes EMD well-defined. The app captures Cartesian (x, y) click positions relative to the rendered triangle; conversion to barycentric coordinates is performed in the analysis pipeline using the known vertex positions. EMD on the 2-simplex measures the minimum work required to transform one distribution into the other, using Euclidean distance in barycentric space as the ground metric (Rubner et al., 2000).
 
 **Significance testing:** Permutation test with 10,000 iterations. For each iteration, randomly reassign population labels to all respondents and recompute EMD. The p-value is the proportion of permuted EMDs that equal or exceed the observed EMD. Reject the null hypothesis (no distributional difference) if p < 0.05.
 
@@ -147,15 +153,27 @@ Compute earth mover's distance (EMD) between Population A and Population B triad
 
 **Distribution visualization.** Plot both populations as density heatmaps on the triad simplex for each scenario. Visual inspection reveals whether the populations cluster in different regions, along different edges, or with different center-clustering frequencies.
 
-**Center-clustering diagnostic.** Compute the proportion of each population placing within a defined radius of the triad center. Heavy center-clustering in one population but not the other suggests the triad vertices do not span the moral space for that population. Heavy center-clustering in both populations suggests the triad design is inadequate for this scenario. This is the instrument diagnostic described in the paper.
+**Center-clustering diagnostic.** Compute the proportion of each population placing within a barycentric distance of 0.15 from the triad centroid (the point where all three barycentric coordinates equal 1/3). Report results at three pre-registered radii (0.10, 0.15, 0.20) to demonstrate robustness rather than relying on a single threshold. Heavy center-clustering in one population but not the other suggests the triad vertices do not span the moral space for that population. Heavy center-clustering in both populations suggests the triad design is inadequate for this scenario. This is the instrument diagnostic described in the paper.
 
-**Vertex-proximity analysis.** For each population, compute the proportion of placements within a defined radius of each vertex. This produces a coarse three-category distribution (vertex A dominant, vertex B dominant, vertex C dominant) that can be compared directly via chi-square or Fisher's exact test as a robustness check on the EMD result.
+**Vertex-proximity analysis.** For each population, compute the proportion of placements within a barycentric distance of 0.20 from each vertex (reported at 0.15, 0.20, 0.25 for robustness). This produces a coarse three-category distribution (vertex A dominant, vertex B dominant, vertex C dominant) that can be compared directly via chi-square or Fisher's exact test as a robustness check on the EMD result.
 
 **Dimensional independence.** Each respondent completes both scenarios. Compute the correlation between Scenario 1 triad position and Scenario 2 triad position within each population. Low correlation supports the paper's claim that the four dimensions are structurally independent. High correlation suggests they co-vary within populations, which is informative for the architecture but complicates per-dimension analysis.
 
 ### Exploratory Narrative Analysis
 
 Read the narratives from respondents whose triad placements fall in regions of high population divergence. Do the narratives reveal different reasoning patterns? This is a qualitative preview of the Stage 2 reasoning analysis the paper proposes. It is exploratory, not confirmatory, and should be reported as such.
+
+---
+
+## Ethics
+
+This study collects personal narratives about moral experiences from human participants. Ethical requirements:
+
+**Informed consent.** Participants receive a study description on Screen 1 explaining that they will be asked to share stories about moral experiences in their communities and interpret those stories using a visual tool. They are informed that their responses are anonymous (linked only to Prolific ID for payment), that narratives will be used for research on moral framework measurement, and that they may withdraw at any time without penalty. Consent is recorded via checkbox before any data is collected.
+
+**IRB or equivalent review.** If conducted through an institutional affiliation, IRB approval or exemption determination is required before launch. If conducted independently, Prolific's own ethics review process provides baseline coverage (Prolific requires all studies to meet their ethical guidelines, including informed consent, right to withdraw, and fair compensation). In either case, the study protocol should be reviewed by at least one person with human subjects research training before recruitment begins. The moral scenarios ask about community experiences, not personal trauma, and the prompts are designed to elicit third-person narratives ("someone in your community") rather than first-person disclosures, minimizing risk of distress.
+
+**Data protection.** Narratives are stored in Supabase with row-level security. Prolific IDs are stored separately from narrative data and used only for payment reconciliation. No identifying information (names, locations, specific institutions) is solicited. Published results will use aggregate distributions and anonymized narrative excerpts only.
 
 ---
 
@@ -223,3 +241,19 @@ If the results are positive, they provide the first empirical evidence that the 
 **If positive:** Share results with Snowden (validates SenseMaker for moral measurement, new commercial territory), Dragan (empirical foundation for a research collaboration or PhD project), Tennant (complementary data for their intrinsic reward approach). Expand to the full California pilot with four populations, four scenarios, and the balanced incomplete block design described in the paper. Seek grant funding or commercial partnership for the expanded pilot.
 
 **If null:** Diagnose which interpretation applies (instrument resolution, population convergence, or scenario design). If instrument resolution, consider whether a different instrument is needed and whether the paper's architecture survives without SenseMaker. If population convergence, this is evidence for the paper's app-deployment-risk argument and motivation for facilitator-based recruitment of less-connected populations. If scenario design, revise and retest within the remaining iteration budget.
+
+---
+
+## Key References
+
+- Henrich, J., Heine, S. J., & Norenzayan, A. (2010). The weirdest people in the world? *Behavioral and Brain Sciences*, 33(2-3), 61-83.
+- Haidt, J. (2012). *The Righteous Mind: Why Good People Are Divided by Politics and Religion.* Vintage Books.
+- Graham, J., Haidt, J., Koleva, S., Motyl, M., Iyer, R., Wojcik, S. P., & Ditto, P. H. (2013). Moral foundations theory: The pragmatic validity of moral pluralism. *Advances in Experimental Social Psychology*, 47, 55-130.
+- Shweder, R. A., Much, N. C., Mahapatra, M., & Park, L. (1997). The "big three" of morality (autonomy, community, divinity). In A. Brandt & P. Rozin (Eds.), *Morality and Health* (pp. 119-169). Routledge.
+- Awad, E., et al. (2018). The Moral Machine experiment. *Nature*, 563(7729), 59-64.
+- Van der Merwe, S. E., et al. (2019). Making sense of complexity: Using SenseMaker as a research tool. *Systems*, 7(2), 25.
+- Bartels, S. A., et al. (2018). Making sense of child, early and forced marriage among Syrian refugee girls. *BMJ Global Health*, 3(1), e000509.
+- Bartels, S. A., et al. (2019). SenseMaker as a monitoring and evaluation tool. *Evaluation and Program Planning*, 77, 101715.
+- Rubner, Y., Tomasi, C., & Guibas, L. J. (2000). The earth mover's distance as a metric for image retrieval. *International Journal of Computer Vision*, 40(2), 99-121.
+- Duong, T. (2007). ks: Kernel density estimation and kernel discriminant analysis for multivariate data in R. *Journal of Statistical Software*, 21(7), 1-16.
+- Atari, M., et al. (2023). Morality beyond the WEIRD: How the nomological network of morality varies across cultures. *Journal of Personality and Social Psychology*. (Introduces MFQ-2.)
