@@ -58,7 +58,8 @@ Position paper complete. Experiment designs specified. No components built, no d
 The author welcomes collaboration with researchers who can contribute formal ML frameworks, run the pilot experiments, or connect this work to existing alignment research programs. See the paper's Notes on Positionality for full background.
 
 **Declan Michaels** - Pike Road, Alabama
-<!-- Add contact info -->
+**mcoon1961@gmail.com**
+**linkedin.com/in/declanmichaels**
 
 ## License
 
