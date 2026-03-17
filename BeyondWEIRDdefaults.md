@@ -231,11 +231,11 @@ AI alignment does not need a model with better morals. It needs a model that kno
 
 [2] Haidt, J. (2012). *The Righteous Mind: Why Good People Are Divided by Politics and Religion.* Vintage Books.
 
-[3] Durmus, E., et al. (2024). Towards measuring the representation of subjective global opinions in language models. In *Proceedings of the Conference on Language Modeling (COLM 2024)*.
+[3] Durmus, E., Nguyen, K., Liao, T. I., Schiefer, N., Askell, A., Bakhtin, A., et al. (2024). Towards measuring the representation of subjective global opinions in language models. In *Proceedings of the Conference on Language Modeling (COLM 2024)*.
 
-[4] Casper, S., et al. (2023). Open problems and fundamental limitations of reinforcement learning from human feedback. *Transactions on Machine Learning Research*. arXiv:2307.15217.
+[4] Casper, S., Davies, X., Shi, C., Gilbert, T. K., Scheurer, J., Rando, J., et al. (2023). Open problems and fundamental limitations of reinforcement learning from human feedback. *Transactions on Machine Learning Research*. arXiv:2307.15217.
 
-[5] Awad, E., et al. (2018). The Moral Machine experiment. *Nature*, 563(7729), 59-64.
+[5] Awad, E., Dsouza, S., Kim, R., Schulz, J., Henrich, J., Shariff, A., et al. (2018). The Moral Machine experiment. *Nature*, 563(7729), 59-64.
 
 [6] Rawls, J. (1993). *Political Liberalism.* Columbia University Press.
 
@@ -249,27 +249,27 @@ AI alignment does not need a model with better morals. It needs a model that kno
 
 [11] Curry, O. S., Mullins, D. A., & Whitehouse, H. (2019). Is it good to cooperate? Testing the theory of morality-as-cooperation in 60 societies. *Current Anthropology*, 60(1), 47-69.
 
-[12] Dryzek, J. S., et al. (2019). The crisis of democracy and the science of deliberation. *Science*, 363(6432), 1144-1146.
+[12] Dryzek, J. S., Bächtiger, A., Chambers, S., Cohen, J., Druckman, J. N., Felicetti, A., et al. (2019). The crisis of democracy and the science of deliberation. *Science*, 363(6432), 1144-1146.
 
-[13] Van der Merwe, S. E., et al. (2019). Making sense of complexity: Using SenseMaker as a research tool. *Systems*, 7(2), 25.
+[13] Van der Merwe, S. E., Biggs, R., Preiser, R., Cunningham, C., Snowden, D. J., O'Brien, K., et al. (2019). Making sense of complexity: Using SenseMaker as a research tool. *Systems*, 7(2), 25.
 
 [14] Snowden, D. J., & Boone, M. E. (2007). A leader's framework for decision making. *Harvard Business Review*, 85(11), 68-76.
 
-[15] Yan, Y., Lou, X., Li, J., Zhang, Y., Xie, J., Yu, C., Wang, Y., Yan, D., & Shen, Y. (2024). Reward-robust RLHF in LLMs. *arXiv:2409.15360*.
+[15] Yan, Y., Lou, X., Li, J., Zhang, Y., Xie, J., Yu, C., et al. (2024). Reward-robust RLHF in LLMs. *arXiv:2409.15360*.
 
-[16] Bartels, S. A., et al. (2018). Making sense of child, early and forced marriage among Syrian refugee girls. *BMJ Global Health*, 3(1), e000509.
+[16] Bartels, S. A., Michael, S., Roupetz, S., Garbern, S., Kilzar, L., Bergquist, H., et al. (2018). Making sense of child, early and forced marriage among Syrian refugee girls. *BMJ Global Health*, 3(1), e000509.
 
-[17] Bartels, S. A., et al. (2019). SenseMaker as a monitoring and evaluation tool. *Evaluation and Program Planning*, 77, 101715.
+[17] Bartels, S. A., Michael, S., Vahedi, L., Collier, A., Kelly, J., Davison, C., et al. (2019). SenseMaker as a monitoring and evaluation tool. *Evaluation and Program Planning*, 77, 101715.
 
-[18] Bai, Y., et al. (2022). Constitutional AI: Harmlessness from AI feedback. *arXiv:2212.08073*.
+[18] Bai, Y., Kadavath, S., Kundu, S., Askell, A., Kernion, J., Jones, A., et al. (2022). Constitutional AI: Harmlessness from AI feedback. *arXiv:2212.08073*.
 
-[19] Huang, S., et al. (2024). Collective Constitutional AI: Aligning a language model with public input. *FAccT '24*. arXiv:2406.07814.
+[19] Huang, S., Siddarth, D., Lovitt, L., Liao, T. I., Durmus, E., Tamkin, A., et al. (2024). Collective Constitutional AI: Aligning a language model with public input. *FAccT '24*. arXiv:2406.07814.
 
-[20] Sorensen, T., Moore, J., Fisher, J., Gordon, M. L., Mireshghallah, N., Rytting, C. M., Ye, A., Jiang, L., Lu, X., Dziri, N., Althoff, T., & Choi, Y. (2024). Position: A roadmap to pluralistic alignment. In *Proceedings of the 41st International Conference on Machine Learning (ICML)*, PMLR 235:46280-46302.
+[20] Sorensen, T., Moore, J., Fisher, J., Gordon, M. L., Mireshghallah, N., Rytting, C. M., et al. (2024). Position: A roadmap to pluralistic alignment. In *Proceedings of the 41st International Conference on Machine Learning (ICML)*, PMLR 235:46280-46302.
 
 [21] Tennant, E., Hailes, S., & Musolesi, M. (2024). Hybrid approaches for moral value alignment in AI agents: a manifesto. *arXiv:2312.01818*.
 
-[22] Conitzer, V., Freedman, R., Heitzig, J., Holliday, W. H., Jacobs, B. M., Lambert, N., Mosse, M., Pacuit, E., Russell, S., Schoelkopf, H., Tewolde, E., & Zwicker, W. S. (2024). Position: Social choice should guide AI alignment in dealing with diverse human feedback. In *Proceedings of the 41st International Conference on Machine Learning (ICML)*, PMLR 235.
+[22] Conitzer, V., Freedman, R., Heitzig, J., Holliday, W. H., Jacobs, B. M., Lambert, N., et al. (2024). Position: Social choice should guide AI alignment in dealing with diverse human feedback. In *Proceedings of the 41st International Conference on Machine Learning (ICML)*, PMLR 235.
 
 [23] Gabriel, I., & Keeling, G. (2025). A matter of principle? AI alignment as the fair treatment of claims. *Philosophical Studies*, 182(7), 1951-1973.
 
