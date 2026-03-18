@@ -1,0 +1,5 @@
+# PDF files for outreach - not tracked in public repo
+pdfs/
+
+# OS files
+.DS_Store
