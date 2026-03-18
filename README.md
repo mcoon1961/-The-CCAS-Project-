@@ -24,7 +24,7 @@ The classification function's output enters the training pipeline upstream throu
 
 | File | Description |
 |------|-------------|
-| [BeyondWEIRDdefaults-v2-draft-revised.md](./BeyondWEIRDdefaults-v2-draft-revised.md) | The position paper. 11 sections + addendum, 35 references across moral psychology, political philosophy, AI alignment, plasticity research, and field methodology. ~11,000 words. |
+| [BeyondWEIRDdefaults.md](./BeyondWEIRDdefaults.md) | The position paper. 11 sections + addendum, 35 references across moral psychology, political philosophy, AI alignment, plasticity research, and field methodology. ~11,000 words. |
 | [annotated-bibliography-full.md](./annotated-bibliography-full.md) | Detailed annotations for all 35 references, organized by order of appearance. Each entry explains what the source argues, what the paper draws from it, and known limitations. |
 | [dimensional-robustness-companion.md](./dimensional-robustness-companion.md) | Demonstrates that the four structural dimensions are recoverable across Shweder's CAD triad, Gray & Schein's TDM, and Curry's Morality-as-Cooperation. Referenced in Addendum A. |
 
