@@ -1,5 +1,8 @@
 # PDF files for outreach - not tracked in public repo
 pdfs/
 
+# Internal working notes
+cold-read-reviews-march18.md
+
 # OS files
 .DS_Store
