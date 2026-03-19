@@ -37,7 +37,7 @@ Research on collectivists' moral judgments of selfless behavior found that colle
 
 Despite deep divergence on the primacy of individual vs. collective, there is convergence on the *existence* of both levels of moral obligation. No studied culture entirely lacks obligations to the collective, and none entirely lacks recognition of individual moral agency. The disagreement is about primacy and scope, not about whether both exist.
 
-**Assessment:** Strong support for divergence. This dimension would reliably produce different triad distributions across framework-diverse populations. An LLM trained only on individualist moral signal would systematically mishandle prompts involving family obligation, community responsibility, and the moral weight of group harmony. The divergence draws on the loyalty, care, and liberty foundations but is not reducible to any single one — it is a framework-level pattern that emerges when these foundations aggregate across populations.
+**Assessment:** Strong support for divergence. This dimension would reliably produce different slider distributions across framework-diverse populations. An LLM trained only on individualist moral signal would systematically mishandle prompts involving family obligation, community responsibility, and the moral weight of group harmony. The divergence draws on the loyalty, care, and liberty foundations but is not reducible to any single one — it is a framework-level pattern that emerges when these foundations aggregate across populations.
 
 ---
 
@@ -87,7 +87,7 @@ Research on moral judgments of sexual behavior, food practices, and religious ob
 
 There is convergence on the principle that some behaviors are morally significant regardless of whether they cause measurable harm — even WEIRD populations recognize a residual category of "taboo" behaviors that provoke moral judgment absent harm (e.g., incest between consenting adults). The disagreement is about how large and how morally weighty this category is, not about whether it exists.
 
-**Assessment:** Strong support for divergence, and arguably the most consequential dimension for AI alignment. The rationalization layer detects a distinctive pattern here: not divergence in how populations weight competing moral claims within a shared moral domain, but divergence in whether a domain registers as morally relevant in the first place. This is where a calibrated model would behave most differently from a WEIRD-defaulting one — recognizing embedded moral dimensions that its default framework does not see as moral. This is the Tier 1 → Tier 4 behavioral shift the evaluation rubric targets.
+**Assessment:** Strong support for divergence, and arguably the most consequential dimension for AI alignment. The classification function detects a distinctive pattern here: not divergence in how populations weight competing moral claims within a shared moral domain, but divergence in whether a domain registers as morally relevant in the first place. This is where a calibrated model would behave most differently from a WEIRD-defaulting one — recognizing embedded moral dimensions that its default framework does not see as moral. This is the Tier 1 → Tier 4 behavioral shift the evaluation rubric targets.
 
 ---
 
@@ -138,7 +138,7 @@ There is also convergence on the principle that the scope of moral consideration
 - Which cultural framework should accommodate which in cross-cultural encounters (all dimensions)
 - What constitutes "fair" treatment — equal treatment, relational balance, hierarchical allocation, or need-based distribution (derived from positions on Dimensions 1–4)
 
-**The pattern:** Convergence clusters around harm, betrayal, and protection of the vulnerable. Divergence clusters around the *structure* of moral reasoning — how the moral agent is constituted, what counts as a moral domain, where authority is legitimate, and how far moral obligation extends. The MFT foundations produce the content-level signal; the four dimensions describe the framework-level patterns the rationalization layer detects when that signal aggregates across populations. Fairness emerges as a derived judgment: universal as a principle, culturally contingent in its content, with the contingency tracking the structural dimensions. This is precisely the distinction the rationalization layer is designed to detect: convergence as candidate universal signal, divergence as cultural contingency requiring humility rather than confident defaults.
+**The pattern:** Convergence clusters around harm, betrayal, and protection of the vulnerable. Divergence clusters around the *structure* of moral reasoning — how the moral agent is constituted, what counts as a moral domain, where authority is legitimate, and how far moral obligation extends. The MFT foundations produce the content-level signal; the four dimensions describe the framework-level patterns the classification function detects when that signal aggregates across populations. Fairness emerges as a derived judgment: universal as a principle, culturally contingent in its content, with the contingency tracking the structural dimensions. This is precisely the distinction the classification function is designed to detect: convergence as candidate universal signal, divergence as cultural contingency requiring humility rather than confident defaults.
 
 ---
 
@@ -172,4 +172,4 @@ The strongest honest claim: the literature provides grounds for confidence that 
 
 *This document is a working supplement. It should be updated as the paper develops and if pilot data becomes available.*
 
-*Last updated: March 13, 2026 — Axes renamed to dimensions, grounded in MFT. Temporal horizon absorbed into scope. Moral domain boundary (sanctity/degradation) added as Dimension 3. Fairness treated as derived judgment. Cross-dimension pattern updated.*
+*Last updated: March 19, 2026 — Axes renamed to dimensions, grounded in MFT. Temporal horizon absorbed into scope. Moral domain boundary (sanctity/degradation) added as Dimension 3. Fairness treated as derived judgment. Cross-dimension pattern updated. Terminology updated: rationalization layer → classification function, triad → slider distributions.*
