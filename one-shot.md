@@ -124,20 +124,20 @@ Representational geometry is the key to cultural competency. If you try bolt-on 
 
 ## References
 
-Dohare, S., Hernandez-Garcia, J. F., Lan, Q., et al. (2024). Loss of plasticity in deep continual learning. *Nature*, 632(8026), 768-774. [doi.org/10.1038/s41586-024-07711-7](https://doi.org/10.1038/s41586-024-07711-7)
+Dohare, S., Hernandez-Garcia, J. F., Lan, Q., Rahman, P., Mahmood, A. R., & Sutton, R. S. (2024). Loss of plasticity in deep continual learning. *Nature*, 632(8026), 768-774. [doi.org/10.1038/s41586-024-07711-7](https://doi.org/10.1038/s41586-024-07711-7)
 
-Durmus, E., Nguyen, K., Liao, T. I., et al. (2024). Towards measuring the representation of subjective global opinions in language models. In *COLM 2024*. [arxiv.org/abs/2306.16388](https://arxiv.org/abs/2306.16388)
+Durmus, E., Nguyen, K., Liao, T. I., Schiefer, N., Askell, A., Bakhtin, A., et al. (2024). Towards measuring the representation of subjective global opinions in language models. In *COLM 2024*. [arxiv.org/abs/2306.16388](https://arxiv.org/abs/2306.16388)
 
-Gunasekar, S., Zhang, Y., Anber, J., et al. (2023). Textbooks Are All You Need. [arxiv.org/abs/2306.11644](https://arxiv.org/abs/2306.11644)
+Gunasekar, S., Zhang, Y., Aneja, J., Mendes, C. C. T., Del Giorno, A., Gopi, S., et al. (2023). Textbooks Are All You Need. [arxiv.org/abs/2306.11644](https://arxiv.org/abs/2306.11644)
 
 Haidt, J. (2012). *The Righteous Mind: Why Good People Are Divided by Politics and Religion.* Vintage Books.
 
-Henrich, J. (2020). *The WEIRDest People in the World.* Farrar, Straus and Giroux.
+Henrich, J. (2020). *The WEIRDest People in the World: How the West Became Psychologically Peculiar and Particularly Prosperous.* Farrar, Straus and Giroux.
 
 Lardiere, D. (2009). Some thoughts on the contrastive analysis of features in second language acquisition. *Second Language Research*, 25(2), 173-227. [doi.org/10.1177/0267658308100283](https://doi.org/10.1177/0267658308100283)
 
 Mills, C. W. (1997). *The Racial Contract.* Cornell University Press.
 
-Nikishin, E., Schwarzer, M., D'Oro, P., et al. (2022). The primacy bias in deep reinforcement learning. In *ICML*, PMLR 162:16828-16847. [arxiv.org/abs/2205.07802](https://arxiv.org/abs/2205.07802)
+Nikishin, E., Schwarzer, M., D'Oro, P., Bacon, P.-L., & Courville, A. (2022). The primacy bias in deep reinforcement learning. In *ICML*, PMLR 162:16828-16847. [arxiv.org/abs/2205.07802](https://arxiv.org/abs/2205.07802)
 
-Zhou, C., Liu, P., Xu, P., et al. (2023). LIMA: Less is more for alignment. In *NeurIPS 2023*. [arxiv.org/abs/2305.11206](https://arxiv.org/abs/2305.11206)
+Zhou, C., Liu, P., Xu, P., Iyer, S., Sun, J., Mao, Y., et al. (2023). LIMA: Less is more for alignment. In *NeurIPS 2023*. [arxiv.org/abs/2305.11206](https://arxiv.org/abs/2305.11206)
